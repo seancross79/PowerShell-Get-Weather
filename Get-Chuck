@@ -1,0 +1,34 @@
+#This function will respectfully request that Chuck Norris sends you some facts that your computer can read out to you.
+#Windows platform that depends on there being a text-to-speech capability (most Windows 7 through 10 computers do).
+
+#The function will call (default) 10 Chuck Norris facts to be read out; you can adjust to fewer than 10 by using -HowMany parameter.
+#Get-Chuck -HowMany 6
+
+#There will be a 2 second delay between each fact. Your PowerShell prompt will return after the last fact.
+#Built in alias "norris" will also perform the function.
+
+function Get-Chuck {
+
+  [Alias("norris")]
+  
+  Param(
+  
+    [Parameter(Mandatory=$false)]
+    [ValidateRange(1,10)]
+    [int]
+    $HowMany = 10
+    
+  )
+  
+  Add-Type -AssemblyName System.Speech
+  $Speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
+  $Speaker.Rate = 0
+  
+  for(i=0; i -lt $HowMany; i++) {
+  
+    $CallFact = Invoke-RestMethod -uri "https://api.chucknorris.io/jokes/random?"
+    $Speaker.Speak($CallFact.value)
+    Start-Sleep -s 2
+    
+  }
+}
