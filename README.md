@@ -1,2 +1,3 @@
-# PowerShell-Get-Weather
-PowerShell function to get weather information for up to 5 days, multiple locations, in Celsius or Fahrenheit.
+# PowerShell Projects
+Various class, personal, and directed projects related to Windows PowerShell functionality.
+Comments welcome. If you copy, please modify contents to match your environment, or provide attribution.
