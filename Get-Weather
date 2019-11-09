@@ -1,0 +1,72 @@
+# Get-Weather 'City,St' <number of days, 1 to 5> <One of:F, Fahrenheit (default), C, Celsius>
+# For internatinal weather, use City, Country (digraph or full country name)
+# Multiple Locations? Put a comma between the places.  Get-Weather 'Chicago,IL','Dublin,Ireland' 5 F
+
+function Get-Weather {
+
+  param(
+    [Parameter(Position=0, Mandatory=$true)
+    [ValidateNotNull()]
+    [string[]]
+    $location,
+    
+    [Parameter(Position=1, Mandatory=$false]
+    [ValidateRange(1,5)]
+    [int]
+    $days = 1,
+    
+    [Parameter(Position=2, Mandatory=$false]
+    [string]
+    $tempUnit = "F"
+    )
+    
+    foreach($loc in $location) {
+    
+      [string]$mapKey = '' #Use your own key provided by your map provider's API.
+      [string]$weatherKey = ' ' #Use your own key provided by your weather provider's API.
+      
+      $map = Invoke-RestMethod ("https://api.yourmapsite.com/$mapkey/$loc) #Your map API will include the site, specific query, and your map key.
+      
+      $loc_lat = $map.results.position.lat[0] #Member types may very. Lan/Lon are specific to Azure maps. Consult your site's API documentation.
+      $loc_lon = $map.results.position.lon[0]
+      
+      $weather = Invoke-RestMethod ("https://api.yourweathersite.com/$weatherKey/$loc_lat,$loc_lon") #Again, refer to site's API on specific calls.
+                                                                                                     #This call is specific to DarkSky.Ne t.
+      
+      if($tempUnit = "C" -OR $tempUnit = "Celsius") {
+      
+        for($i = 0; i -lt $days; i++) {
+        
+          [pscustomobject] [ordered] @{
+          'Place' = $loc
+          'Date' = (Get-Date).AddDays($i).ToString("MM/dd/yyyy")
+          'Summary' = $weather.daily.data[$i].summary
+          'Low (C)' = [math]::Round(((($weather.daily.data[$i].temperatureLow - 32) * 5) / 9),2)
+          'High (C)' = [math]::Round(((($weather.daily.data[$i].temperatureHigh - 32) * 5) / 9),2)
+          
+          }
+        }
+      }
+      
+      ElseIf($tempUnit -eq "F" -OR $tempUnit -eq "Fahrenheit") {
+      
+        for($i = 0; i -lt $days; i++) {
+        
+          [pscustomobject] [ordered] @{
+          'Place' = $loc
+          'Date' = (Get-Date).AddDays($i).ToString("MM/dd/yyyy")
+          'Summary' = $weather.daily.data[$i].summary
+          'Low (F)' = $weather.daily.data[$i].temperatureLow
+          'High (F)' = $weather.daily.data[$i].temperatureHigh
+          
+          }
+        }
+      }
+      
+      Else {
+      
+        Write-Error 'Please select a temperature scale from: C, Celsius, F, or Fahrenheit.'
+        
+      }
+    }
+}
