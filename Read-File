@@ -1,0 +1,30 @@
+function Read-File{
+    # Cmdlet: Read-File-location "dir\file" -speed (number)
+
+    param(
+
+        [Parameter(mandatory=$true)] 
+        [string]
+        $location,   #Type the file path where the text file is stored.
+
+        [Parameter(mandatory=$true)] # [BRAD] this should be false and have a default value
+        [int]
+        $speed   #Selects the speed for the reader; -10 is slowest, 10 is fastest. Recommended range is -1 to 1.
+
+    )
+
+Add-Type -AssemblyName System.Speech 
+$speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$speaker.SelectVoice('Microsoft Zira Desktop') #You may select David or any other voice found in your Settings - Time and Language - Speech window
+$speaker.Rate = $speed
+$contents = Get-Content $location
+
+#Remove the comment tags from the next two lines if you prefer to have the speech put on a .wav file on your desktop.
+#Keep the comment tags from the next two lines if you prefer to hear the speech on your speakers/headphones; will not save a file.
+
+#$WavFileOut = Join-Path -Path $env:USERPROFILE -ChildPath "Desktop\Read-File.wav"
+#$speaker.SetOutputToWaveFile($WavFileOut)
+
+$speaker.Speak($contents)
+
+}
