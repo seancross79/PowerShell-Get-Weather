@@ -25,13 +25,22 @@ function Get-Weather {
       [string]$mapKey = '' #Use your own key provided by your map provider's API.
       [string]$weatherKey = ' ' #Use your own key provided by your weather provider's API.
       
-      $map = Invoke-RestMethod ("https://api.yourmapsite.com/$mapkey/$loc) #Your map API will include the site, specific query, and your map key.
+      $map = Invoke-RestMethod ("https://api.yourmapsite.com/$mapkey/$loc) 
       
-      $loc_lat = $map.results.position.lat[0] #Member types may very. Lan/Lon are specific to Azure maps. Consult your site's API documentation.
-      $loc_lon = $map.results.position.lon[0]
+      #Your map API will include the site, specific query, and your map key.
       
-      $weather = Invoke-RestMethod ("https://api.yourweathersite.com/$weatherKey/$loc_lat,$loc_lon") #Again, refer to site's API on specific calls.
-                                                                                                     #This call is specific to DarkSky.Ne t.
+      $loc_lat = $map.results.position.lat[0] 
+      $loc_lon = $map.results.position.lon[0] 
+      
+      #Member types may very. Lat/Lon above are specific to Azure maps. Consult your site's API documentation.
+      #To check, set a variable to Invoke-RestMethod for your site. Then, Get-Member $YourVariable, and
+      #drill down into the properties until you find where your data rests. Another method is to pull
+      #the URI using FireFox, which can display the JSON in a format you can analyze and use.
+      
+      $weather = Invoke-RestMethod ("https://api.yourweathersite.com/$weatherKey/$loc_lat,$loc_lon") 
+
+      #Again, refer to site's API on specific calls.The above call is specific to DarkSky.Net, and pulls
+      #the data that is used in the statements below.
       
       if($tempUnit = "C" -OR $tempUnit = "Celsius") {
       
