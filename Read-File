@@ -7,9 +7,9 @@ function Read-File{
         [string]
         $location,   #Type the file path where the text file is stored.
 
-        [Parameter(mandatory=$true)] # [BRAD] this should be false and have a default value
+        [Parameter(mandatory=$false)] 
         [int]
-        $speed   #Selects the speed for the reader; -10 is slowest, 10 is fastest. Recommended range is -1 to 1.
+        $speed = 0   #Selects the speed for the reader; -10 is slowest, 10 is fastest. Recommended range is -1 to 1.
 
     )
 
@@ -17,6 +17,7 @@ Add-Type -AssemblyName System.Speech
 $speaker = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $speaker.SelectVoice('Microsoft Zira Desktop') #You may select David or any other voice found in your Settings - Time and Language - Speech window
 $speaker.Rate = $speed
+
 $contents = Get-Content $location
 
 #Remove the comment tags from the next two lines if you prefer to have the speech put on a .wav file on your desktop.
